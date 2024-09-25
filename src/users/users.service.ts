@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { Login } from './login';
 
 @Injectable()
 export class UsersService {
@@ -24,5 +25,14 @@ export class UsersService {
 
   async remove(id: number): Promise<void> {
     await this.usersRepository.delete(id);
+  }
+
+  async login(user: Login): Promise<boolean> {
+    const foundUser = await this.usersRepository.findOneBy({userName: user.userName})
+    if (!foundUser) {
+      console.log("USER NOT FOUND");
+      return false
+    }
+    return foundUser.password === user.password
   }
 }
